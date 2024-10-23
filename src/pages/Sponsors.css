@@ -1,0 +1,11 @@
+/* src/pages/Sponsors.css */
+.sponsors-page {
+    padding: 2rem 0;
+  }
+  
+  .sponsor-logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: 1rem;
+  }
+  

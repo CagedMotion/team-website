@@ -1,0 +1,12 @@
+/* src/pages/PastCars.css */
+.past-cars-page {
+    padding: 2rem 0;
+  }
+  
+  .car-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
