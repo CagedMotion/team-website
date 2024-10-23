@@ -1,8 +1,7 @@
 // src/pages/PastCars.js
 
 import React, { useEffect, useState } from 'react';
-import { getPastCars } from '../services/airtable';
-import './PastCars.css';
+import { getPastCars } from '../services/Airtable';
 
 const PastCars = () => {
   const [pastCars, setPastCars] = useState([]);
@@ -16,13 +15,13 @@ const PastCars = () => {
   }, []);
 
   return (
-    <div className="container past-cars-page">
-      <h1 className="text-center">Past Solar Cars</h1>
-      <div className="row">
+    <div>
+      <h1>Past Cars</h1>
+      <div className="cars-grid">
         {pastCars.map((car, index) => (
-          <div key={index} className="col-md-4 my-3">
-            <img src={car.imageUrl} alt={car.model} className="img-fluid car-image" />
-            <h3>{car.model} ({car.year})</h3>
+          <div key={index} className="car-card">
+            <img src={car.imageUrl} alt={car.carName} />
+            <h3>{car.carName} ({car.year})</h3>
             <p>{car.description}</p>
           </div>
         ))}

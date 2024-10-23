@@ -1,23 +1,23 @@
-// src/pages/Home.js
+// src/components/PageContent.js
 
 import React, { useState, useEffect } from 'react';
-import { getPageContent } from '../api/airtableAPI'; // You'd define this function to fetch Airtable data
+import { getPageContent } from '../api/airtableAPI';
 
-const Home = () => {
+const PageContent = ({ page }) => {
   const [content, setContent] = useState(null);
 
   useEffect(() => {
     async function fetchContent() {
-      const data = await getPageContent('home'); // Fetch data for the 'home' page
+      const data = await getPageContent(page);
       setContent(data);
     }
     fetchContent();
-  }, []);
+  }, [page]);
 
   if (!content) return <div>Loading...</div>;
 
   return (
-    <div className="home-page">
+    <div className={`page-content ${page}-page`}>
       <h1>{content.InfoTitle}</h1>
       <p>{content.Info}</p>
       <img src={content.Image[0].url} alt={content.ImageTitle} />
@@ -30,4 +30,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default PageContent;

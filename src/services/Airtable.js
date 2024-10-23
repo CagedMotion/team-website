@@ -2,67 +2,83 @@
 
 import Airtable from 'airtable';
 
-const base = new Airtable({ apiKey: 'YOUR_API_KEY' }).base('YOUR_BASE_ID');
+// Replace these with your actual Personal Access Token and Base ID
+const base = new Airtable({ apiKey: process.env.REACT_APP_AIRTABLE_API_KEY }).base(process.env.REACT_APP_AIRTABLE_BASE_ID);
 
-export const getHomePageContent = async () => {
-  const records = await base('HomePage').select({}).firstPage();
+export const getHeaders = async () => {
+  const records = await base('Headers').select({}).firstPage();
   return records.map(record => ({
-    imageUrl: record.get('ImageField')[0].url,  // Access the image URL from the Attachment field
-    text: record.get('TextField'),  // Assuming you have a field for text
+    page: record.get('Page'),   // Assuming there's a "Page" field in Headers
+    link: record.get('Link'),   // Assuming there's a "Link" field in Headers
   }));
 };
 
-export const getTelemetryData = async () => {
-  const records = await base('Telemetry').select({}).firstPage();
+export const getMeetings = async () => {
+  const records = await base('Meetings').select({}).firstPage();
   return records.map(record => ({
-    speed: record.get('Speed'),
-    battery: record.get('Battery'),
-    timestamp: record.get('Timestamp')
+    date: record.get('Date'),   // Assuming there's a "Date" field in Meetings
+    time: record.get('Time'),   // Assuming there's a "Time" field in Meetings
+    agenda: record.get('Agenda'),   // Assuming there's an "Agenda" field
   }));
 };
 
-export const getTeamMembers = async () => {
-    const records = await base('TeamMembers').select({}).firstPage();
-    return records.map(record => ({
-      name: record.get('Name'),
-      role: record.get('Role'),
-      imageUrl: record.get('Profile Picture')[0].url,
-    }));
-  };
+export const getMembers = async () => {
+  const records = await base('Members').select({}).firstPage();
+  return records.map(record => ({
+    name: record.get('Name'),
+    position: record.get('Position'),
+    profilePicture: record.get('Profile Picture')?.[0]?.url,  // Access the profile picture
+  }));
+};
 
-// src/services/airtable.js
-
-export const getSponsors = async () => {
-    const records = await base('Sponsors').select({}).firstPage();
-    return records.map(record => ({
-      name: record.get('Name'),
-      description: record.get('Description'),
-      logoUrl: record.get('Logo')[0].url,
-      homepage: record.get('Homepage'),
-    }));
-  };
-  
+export const getAboutUs = async () => {
+  const records = await base('AboutUs').select({}).firstPage();
+  return records.map(record => ({
+    tabName: record.get('TabName'),   // Assuming there's a "TabName" field
+    content: record.get('Content'),   // Assuming there's a "Content" field
+  }));
+};
 
 export const getPastCars = async () => {
-    const records = await base('PastCars').select({}).firstPage();
-    return records.map(record => ({
-      model: record.get('Model'),
-      year: record.get('Year'),
-      description: record.get('Description'),
-      imageUrl: record.get('Image')[0].url,
-    }));
-  };
-  
+  const records = await base('PastCars').select({}).firstPage();
+  return records.map(record => ({
+    carName: record.get('CarName'),   // Assuming there's a "CarName" field
+    year: record.get('Year'),
+    description: record.get('Description'),
+    imageUrl: record.get('Image')?.[0]?.url,  // Access the image of the car
+  }));
+};
 
-// src/services/airtable.js
+export const getSponsors = async () => {
+  const records = await base('Sponsors').select({}).firstPage();
+  return records.map(record => ({
+    name: record.get('Name'),
+    logoUrl: record.get('Logo')?.[0]?.url,    // Access sponsor logo
+    website: record.get('Website'),
+  }));
+};
 
-export const getGalleryImages = async (year) => {
-    const records = await base('Gallery').select({
-      filterByFormula: `Year = '${year}'`
+// Function to fetch content for a specific page
+export async function getPageContent(pageName) {
+  try {
+    const records = await base('Headers').select({
+      filterByFormula: `{Page} = '${pageName}'`,
     }).firstPage();
-    return records.map(record => ({
-      imageUrl: record.get('Image')[0].url,
-      year: record.get('Year'),
-    }));
-  };
-  
+
+    if (records.length > 0) {
+      const record = records[0].fields;
+      return {
+        Image: record.Image,
+        Logo: record.Logo,
+        ImageTitle: record.ImageTitle,
+        InfoTitle: record.InfoTitle,
+        Info: record.Info,
+      };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching Airtable data:', error);
+    return null;
+  }
+}

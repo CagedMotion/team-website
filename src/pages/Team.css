@@ -1,11 +1,32 @@
-/* src/pages/Team.css */
+/* Add to App.css or Team.css */
+
 .team-page {
-    padding: 2rem 0;
-  }
-  
-  .team-member-image {
-    border-radius: 50%;
-    max-width: 150px;
-    margin-bottom: 1rem;
-  }
-  
+  padding: 20px;
+  text-align: center;
+}
+
+.team-members {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.team-member {
+  margin: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 200px;
+  text-align: center;
+}
+
+.member-picture {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+
+.current-member {
+  color: green;
+  font-weight: bold;
+}

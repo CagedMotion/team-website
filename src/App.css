@@ -158,3 +158,35 @@ footer a {
 html {
   scroll-behavior: smooth;
 }
+
+.page-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.page-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.page-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.page-content p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+}
+
+.logos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.logos img {
+  margin: 10px;
+  max-width: 150px;
+  height: auto;
+}

@@ -1,34 +1,40 @@
 // src/pages/Team.js
 
-import React, { useEffect, useState } from 'react';
-import { getTeamMembers } from '../services/airtable';
-import './Team.css';  // Custom styles for the team page
+import React, { useState, useEffect } from 'react';
+import Airtable from 'airtable';
 
-const Team = () => {
+// Airtable setup
+const base = new Airtable({ apiKey: 'YOUR_AIRTABLE_API_KEY' }).base('YOUR_BASE_ID');
+
+function Team() {
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
-    async function fetchTeam() {
-      const data = await getTeamMembers();
-      setTeamMembers(data);
-    }
-    fetchTeam();
+    // Fetch the "Members" table from Airtable
+    base('Members').select({
+      view: "Grid view", // Replace with your view name if necessary
+    }).eachPage((records, fetchNextPage) => {
+      // Store the records into state
+      setTeamMembers(records);
+      fetchNextPage();
+    });
   }, []);
 
   return (
-    <div className="container-fluid team-page">
-      <h1 className="text-center">Meet Our Team</h1>
-      <div className="row">
-        {teamMembers.map((member, index) => (
-          <div key={index} className="col-md-4 text-center my-3">
-            <img src={member.imageUrl} alt={member.name} className="img-fluid team-member-image" />
-            <h3>{member.name}</h3>
-            <p>{member.role}</p>
+    <div className="team-page">
+      <h1>Our Team</h1>
+      <div className="team-members">
+        {teamMembers.map((member) => (
+          <div key={member.id} className="team-member">
+            <img src={member.fields.Picture[0].url} alt={member.fields.Name} className="member-picture" />
+            <h2>{member.fields.Name}</h2>
+            <p>{member.fields.Position}</p>
+            {member.fields.Current && <p className="current-member">Current Member</p>}
           </div>
         ))}
       </div>
     </div>
   );
-};
+}
 
 export default Team;
