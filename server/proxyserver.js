@@ -2,10 +2,14 @@
 
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');  // Import CORS middleware
 const app = express();
 const port = 5000;
 
-const airtableBaseUrl = 'https://airtable.com/v0/appi09iP9sn2pprfV/tblJrzVEFMFuVvTpE';
+// Enable CORS for all routes
+app.use(cors());  // This will add the required headers to all responses
+
+const airtableBaseUrl = 'https://api.airtable.com/v0/appi09iP9sn2pprfV';
 const airtableApiKey = process.env.REACT_APP_AIRTABLE_API_KEY; // Or fetch it from environment variables
 
 app.use(express.json());
@@ -21,6 +25,7 @@ app.get('/api/:table', async (req, res) => {
     });
     res.json(response.data);  // Forward Airtable's response to the client
   } catch (error) {
+    console.error('Error fetching data from Airtable:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: error.message });
   }
 });

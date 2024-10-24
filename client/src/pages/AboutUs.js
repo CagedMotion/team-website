@@ -1,30 +1,32 @@
-// src/pages/AboutUs.js
+// src/components/AboutUs.js
 
 import React, { useEffect, useState } from 'react';
 import { getAboutUs } from '../services/Airtable';
 
 const AboutUs = () => {
-  const [aboutUsTabs, setAboutUsTabs] = useState([]);
+  const [sections, setSections] = useState([]);
 
   useEffect(() => {
-    async function fetchAboutUs() {
-      const data = await getAboutUs();
-      setAboutUsTabs(data);
+    async function fetchData() {
+      try {
+        const data = await getAboutUs();
+        setSections(data);
+      } catch (error) {
+        console.error('Error fetching About Us sections:', error);
+      }
     }
-    fetchAboutUs();
+    fetchData();
   }, []);
 
   return (
     <div>
       <h1>About Us</h1>
-      <div className="tabs">
-        {aboutUsTabs.map((tab, index) => (
-          <div key={index}>
-            <h3>{tab.tabName}</h3>
-            <p>{tab.content}</p>
-          </div>
-        ))}
-      </div>
+      {sections.map(section => (
+        <div key={section.id}>
+          <h2>{section.title}</h2>
+          <p>{section.info}</p>
+        </div>
+      ))}
     </div>
   );
 };

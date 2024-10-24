@@ -1,4 +1,4 @@
-// src/pages/Sponsors.js
+// src/components/Sponsors.js
 
 import React, { useEffect, useState } from 'react';
 import { getSponsors } from '../services/Airtable';
@@ -7,25 +7,50 @@ const Sponsors = () => {
   const [sponsors, setSponsors] = useState([]);
 
   useEffect(() => {
-    async function fetchSponsors() {
-      const data = await getSponsors();
-      setSponsors(data);
+    async function fetchData() {
+      try {
+        const data = await getSponsors();
+        setSponsors(data);
+      } catch (error) {
+        console.error('Error fetching sponsors:', error);
+      }
     }
-    fetchSponsors();
+    fetchData();
   }, []);
 
   return (
     <div>
       <h1>Sponsors</h1>
-      <div className="sponsors-grid">
-        {sponsors.map((sponsor, index) => (
-          <div key={index} className="sponsor-card">
-            <img src={sponsor.logoUrl} alt={sponsor.name} />
-            <h3>{sponsor.name}</h3>
-            <a href={sponsor.website}>Visit Website</a>
-          </div>
-        ))}
-      </div>
+      {sponsors.map(sponsor => (
+        <div key={sponsor.id}>
+          <h2>{sponsor.company}</h2>
+          <p><strong>Tier:</strong> {sponsor.tier}</p>
+          <p><strong>Location:</strong> {sponsor.location}</p>
+
+          {/* Display logo if available */}
+          {sponsor.logo && (
+            <div>
+              <img 
+                src={sponsor.logo[0].url} 
+                alt={sponsor.logo[0].filename} 
+                width={sponsor.logo[0].width} 
+                height={sponsor.logo[0].height} 
+              />
+              <p>{sponsor.logo[0].filename}</p>
+            </div>
+          )}
+
+          {/* Sponsor Link */}
+          {sponsor.link && (
+            <p><strong>Website:</strong> <a href={sponsor.link} target="_blank" rel="noopener noreferrer">{sponsor.link}</a></p>
+          )}
+
+          <p><strong>Description:</strong> {sponsor.description}</p>
+
+          {/* Is sponsor current */}
+          <p><strong>Current Sponsor:</strong> {sponsor.current ? 'Yes' : 'No'}</p>
+        </div>
+      ))}
     </div>
   );
 };
