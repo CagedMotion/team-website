@@ -15,8 +15,25 @@ app.get('/api/:table', async (req, res) => {
   try {
     const response = await axios.get(`${airtableBaseUrl}/${table}`, {
       headers: {
-        Authorization: `Bearer ${airtableApiKey}`
+        Authorization: `Bearer ${airtableApiKey}`,  // Forward Bearer token to Airtable
+        'Content-Type': 'application/json'
       }
+    });
+    res.json(response.data);  // Forward Airtable's response to the client
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/Pages', async (req, res) => {
+  const filter = req.query.filterByFormula;
+  try {
+    const response = await axios.get(`${airtableBaseUrl}/Pages`, {
+      headers: {
+        Authorization: `Bearer ${airtableApiKey}`,  // Forward Bearer token to Airtable
+        'Content-Type': 'application/json'
+      },
+      params: { filterByFormula: filter }  // Use the filterByFormula query param
     });
     res.json(response.data);
   } catch (error) {

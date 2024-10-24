@@ -7,22 +7,37 @@ const Navbar = () => {
   const [headers, setHeaders] = useState([]);
 
   useEffect(() => {
-    async function fetchHeaders() {
-      const data = await getHeaders();
-      setHeaders(data);
+    async function fetchData() {
+      try {
+        const data = await getHeaders();
+        setHeaders(data);
+      } catch (error) {
+        console.error('Error fetching headers:', error);
+      }
     }
-    fetchHeaders();
+    fetchData();
   }, []);
 
   return (
     <nav>
-      <ul>
-        {headers.map((header, index) => (
-          <li key={index}>
-            <a href={header.link}>{header.page}</a>
-          </li>
-        ))}
-      </ul>
+      {headers.map(header => (
+        <div key={header.id}>
+          <h2>{header.page}</h2>
+          {header.image && (
+            <div>
+              <img src={header.image.url} alt={header.image.filename} width={header.image.width} height={header.image.height} />
+              <p>{header.image.filename}</p>
+              {/* Display thumbnails if available */}
+              {header.image.thumbnails.small && (
+                <img src={header.image.thumbnails.small} alt="Small thumbnail" />
+              )}
+              {header.image.thumbnails.large && (
+                <img src={header.image.thumbnails.large} alt="Large thumbnail" />
+              )}
+            </div>
+          )}
+        </div>
+      ))}
     </nav>
   );
 };
