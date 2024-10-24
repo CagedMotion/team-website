@@ -1,7 +1,7 @@
 // src/pages/Home.js
 
 import React, { useState, useEffect } from 'react';
-import { getPageContent } from '../api/airtableAPI'; // You'd define this function to fetch Airtable data
+import { getPageContent } from '../services/Airtable'; // You'd define this function to fetch Airtable data
 
 const Home = () => {
   const [content, setContent] = useState(null);

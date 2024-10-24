@@ -1,84 +1,103 @@
-// src/services/airtable.js
+// src/services/Airtable.js
 
-import Airtable from 'airtable';
+const baseUrl = 'https://airtable.com/v0/appi09iP9sn2pprfV/tblJrzVEFMFuVvTpE';
 
-// Replace these with your actual Personal Access Token and Base ID
-const base = new Airtable({ apiKey: process.env.REACT_APP_AIRTABLE_API_KEY }).base(process.env.REACT_APP_AIRTABLE_BASE_ID);
-
-export const getHeaders = async () => {
-  const records = await base('Headers').select({}).firstPage();
-  return records.map(record => ({
-    page: record.get('Page'),   // Assuming there's a "Page" field in Headers
-    link: record.get('Link'),   // Assuming there's a "Link" field in Headers
-  }));
+// Use the Bearer token for authentication (fetching it from environment variable)
+const headers = {
+    Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
+    'Content-Type': 'application/json'
 };
 
-export const getMeetings = async () => {
-  const records = await base('Meetings').select({}).firstPage();
-  return records.map(record => ({
-    date: record.get('Date'),   // Assuming there's a "Date" field in Meetings
-    time: record.get('Time'),   // Assuming there's a "Time" field in Meetings
-    agenda: record.get('Agenda'),   // Assuming there's an "Agenda" field
-  }));
-};
+// Generic function to fetch records from a specific table
+const fetchRecords = async (tableName) => {
+    try {
+        const response = await fetch(`${baseUrl}/${tableName}`, { headers });
+        
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
 
-export const getMembers = async () => {
-  const records = await base('Members').select({}).firstPage();
-  return records.map(record => ({
-    name: record.get('Name'),
-    position: record.get('Position'),
-    profilePicture: record.get('Profile Picture')?.[0]?.url,  // Access the profile picture
-  }));
-};
-
-export const getAboutUs = async () => {
-  const records = await base('AboutUs').select({}).firstPage();
-  return records.map(record => ({
-    tabName: record.get('TabName'),   // Assuming there's a "TabName" field
-    content: record.get('Content'),   // Assuming there's a "Content" field
-  }));
-};
-
-export const getPastCars = async () => {
-  const records = await base('PastCars').select({}).firstPage();
-  return records.map(record => ({
-    carName: record.get('CarName'),   // Assuming there's a "CarName" field
-    year: record.get('Year'),
-    description: record.get('Description'),
-    imageUrl: record.get('Image')?.[0]?.url,  // Access the image of the car
-  }));
-};
-
-export const getSponsors = async () => {
-  const records = await base('Sponsors').select({}).firstPage();
-  return records.map(record => ({
-    name: record.get('Name'),
-    logoUrl: record.get('Logo')?.[0]?.url,    // Access sponsor logo
-    website: record.get('Website'),
-  }));
-};
-
-// Function to fetch content for a specific page
-export async function getPageContent(pageName) {
-  try {
-    const records = await base('Headers').select({
-      filterByFormula: `{Page} = '${pageName}'`,
-    }).firstPage();
-
-    if (records.length > 0) {
-      const record = records[0].fields;
-      return {
-        Image: record.Image,
-        Logo: record.Logo,
-        ImageTitle: record.ImageTitle,
-        InfoTitle: record.InfoTitle,
-        Info: record.Info,
-      };
-    } else {
-      return null;
+        const data = await response.json();
+        return data.records;
+    } catch (error) {
+        console.error(`Error fetching data from table ${tableName}:`, error);
+        return [];
     }
-  } catch (error) {
-    console.error('Error fetching Airtable data:', error);
-    return null;
-  }
-}
+};
+
+// Function to get data for Navbar or Header links
+export const getHeaders = async () => {
+    const records = await fetchRecords('Headers');
+    return records.map(record => ({
+        page: record.fields.Page,
+        link: record.fields.Link
+    }));
+};
+
+// Function to get Meetings information
+export const getMeetings = async () => {
+    const records = await fetchRecords('Meetings');
+    return records.map(record => ({
+        date: record.fields.Date,   // Assuming there's a "Date" field in Meetings
+        time: record.fields.Time,   // Assuming there's a "Time" field in Meetings
+        agenda: record.fields.Agenda   // Assuming there's an "Agenda" field in Meetings
+    }));
+};
+
+// Function to get Members information
+export const getMembers = async () => {
+    const records = await fetchRecords('Members');
+    return records.map(record => ({
+        name: record.fields.Name,
+        position: record.fields.Position,
+        profilePicture: record.fields['Profile Picture']?.[0]?.url,  // Access the profile picture
+    }));
+};
+
+// Function to get About Us information
+export const getAboutUs = async () => {
+    const records = await fetchRecords('AboutUs');
+    return records.map(record => ({
+        tabName: record.fields.TabName,   // Assuming there's a "TabName" field
+        content: record.fields.Content,   // Assuming there's a "Content" field
+    }));
+};
+
+// Function to get Past Cars information
+export const getPastCars = async () => {
+    const records = await fetchRecords('PastCars');
+    return records.map(record => ({
+        carName: record.fields.CarName,   // Assuming there's a "CarName" field
+        year: record.fields.Year,
+        description: record.fields.Description,
+        imageUrl: record.fields.Image?.[0]?.url,  // Access the image of the car
+    }));
+};
+
+// Function to get Sponsors information
+export const getSponsors = async () => {
+    const records = await fetchRecords('Sponsors');
+    return records.map(record => ({
+        name: record.fields.Name,
+        logoUrl: record.fields.Logo?.[0]?.url,    // Access sponsor logo
+        website: record.fields.Website,
+    }));
+};
+
+// Function to fetch specific page content based on a filter formula
+export const getPageContent = async (page) => {
+    try {
+        const url = `${baseUrl}/Pages?filterByFormula={Page}="${page}"`;
+        const response = await fetch(url, { headers });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.records.length ? data.records[0].fields : null;
+    } catch (error) {
+        console.error("Error fetching page content:", error);
+        return null;
+    }
+};

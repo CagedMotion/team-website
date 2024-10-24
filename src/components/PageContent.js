@@ -1,7 +1,7 @@
 // src/components/PageContent.js
 
 import React, { useState, useEffect } from 'react';
-import { getPageContent } from '../api/airtableAPI';
+import { getPageContent } from '../services/Airtable';
 
 const PageContent = ({ page }) => {
   const [content, setContent] = useState(null);
