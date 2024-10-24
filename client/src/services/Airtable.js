@@ -1,12 +1,14 @@
 // src/services/Airtable.js
 
-const baseUrl = 'https://airtable.com/v0/appi09iP9sn2pprfV/tblJrzVEFMFuVvTpE';
+const baseUrl = 'http://localhost:5000/api';
 
+/*
 // Use the Bearer token for authentication (fetching it from environment variable)
 const headers = {
     Authorization: `Bearer ${process.env.REACT_APP_AIRTABLE_API_TOKEN}`,
     'Content-Type': 'application/json'
 };
+*/
 
 // Generic function to fetch records from a specific table
 const fetchRecords = async (tableName) => {
