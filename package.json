@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "client": "cd client && npm start",          
-    "server": "cd server && node proxyServer.js",   
-    "start": "concurrently \"npm run server\" \"npm run client\""  
+    "client": "cd client && npm start",
+    "server": "cd server && node proxyServer.js",
+    "start": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
     "axios": "^1.7.7",
     "concurrently": "^9.0.1",
     "cors": "^2.8.5",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^5.0.1"
   }
 }
