@@ -6,8 +6,8 @@ const cors = require('cors');
 const app = express();
 const port = 5000;
 
-const airtableBaseUrl = 'https://api.airtable.com/v0/YOUR_BASE_ID';  // Replace YOUR_BASE_ID with your actual Airtable Base ID
-const airtableApiKey = process.env.AIRTABLE_API_KEY;  // Make sure this is set in your .env file
+const airtableBaseUrl = 'https://api.airtable.com/appi09iP9sn2pprfV';  // Replace YOUR_BASE_ID with your actual Airtable Base ID
+const airtableApiKey = process.env.REACT_APP_AIRTABLE_API_KEY;  // Make sure this is set in your .env file
 
 app.use(cors({origin: 'http://localhost:3000'}));
 app.use(express.json());
